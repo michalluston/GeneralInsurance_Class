@@ -11,7 +11,7 @@ To complete the task answer following questions save your changes and commit to 
    **Answer:** Na vytvorenie svojej vlastnej kópie, v ktorej môžeme robiť ľubovoľné zmeny bez toho aby sme nejako zmenili pôvodnú verziu zkade čerpáme dané dáta/úlohy.
 
 4. **Question:** What command is used for sending selected changes to local repository?  
-   **Answer:** pull
+   **Answer:** push
 
 5. **Question:** What command is used for publishing changes for others?  
    **Answer:** commit
