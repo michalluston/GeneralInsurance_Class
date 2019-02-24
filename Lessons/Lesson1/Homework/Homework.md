@@ -17,4 +17,4 @@ To complete the task answer following questions save your changes and commit to 
    **Answer:** commit
 
 6. **Question:** How can you compare forks and apply changes to other's fork?  
-   **Answer:** na webe som našiel niečo podobné: git diff origin/master (či je to správne netuším, nie som si istý či sme si niečo takéto na hodine vraveli/mali sa naučiť) 
+   **Answer:** pull request
