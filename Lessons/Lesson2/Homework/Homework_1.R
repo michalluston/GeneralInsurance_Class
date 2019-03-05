@@ -8,24 +8,33 @@ library(dplyr)
 install.packages("ggplot2")
 library(ggplot2)
 
-dt_KPI <- read.csv("./Data/lesson2_KPI.csv")
+dt_KPI_raw <- read.csv("./Data/lesson2_KPI.csv")
 
-dt_KPI %>% 
+dt_KPI_raw %>% 
   mutate(Premium = ifelse(Premium < 0, 0, Premium))
 
-dt_KPI %>%  mutate(UWR = Premium - Expenses - Losses) %>% 
+dt_KPI_raw %>%  
+  mutate(UWR = Premium - Expenses - Losses) %>% 
+  group_by(Unit) %>% 
+  summarize(UWR = sum(UWR, na.rm = TRUE)) %>% 
+  arrange(UWR)
+
+dt_KPI_raw %>%  
+  mutate(UWR = Premium - Expenses - Losses) %>% 
+  filter(Unit == "Unit7") %>% 
   group_by(Year) %>% 
   summarize(UWR = sum(UWR, na.rm = TRUE)) %>% 
   arrange(UWR)
 
-dt_KPI %>% 
+dt_KPI_raw %>% 
   mutate(UWR = Premium - Expenses - Losses) %>% 
+  filter(Unit == "Unit7") %>% 
   group_by(Year) %>% 
   summarize(UWR = sum(UWR, na.rm = TRUE)) %>% 
   ggplot(aes(x = reorder(Year, UWR), y = UWR)) + 
   geom_col()
 
-
 # Your Explanation about analysis:
-# očistenie dát -> zoskupenie podľa rokov -> porovnanie podľa Underwriting Result
-# Výsledok: Najhorší rok vyšiel 2015, lebo rok 2015 má najnižšiu hodnotu UWR
+# Očistenie dát od záporných -> vyhľadanie portfólia s najvyššou hodnotou Underwriting result (Unit7) -> zoskupenie podľa roku -> 
+-> porovnanie Underwriting result a následné grafické znázornenie ->
+Najhorší rok pre najprofitabilnejšie portfólio Unit7 je rok 2014
