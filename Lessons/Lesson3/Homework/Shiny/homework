@@ -1,0 +1,22 @@
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Farebny scatter graf"),
+  sidebarPanel(selectInput("colour", "Colour", choices=c("Segment", "Unit", "Region", "Business", "Year"))),
+  mainPanel(plotOutput("Plot"))
+)
+
+library(ggplot2)
+library(dplyr)
+
+server <- function(input, output) {
+  vals <- read.csv("C:\\Users\\elu\\Desktop\\skola\\aktuarstvo\\GeneralInsurance_Class-Class2019\\Data\\lesson2_KPI.csv")
+  output$Plot <- renderPlot ({
+    ggplot(data = vals) +
+      geom_point(mapping = aes_string(x=vals$Premium, y=vals$Expenses, colour = input$colour)) +
+      geom_smooth(mapping = aes_string(x=vals$Premium, y=vals$Expenses, colour = input$colour)) +
+      labs(x="Premium", y="Expenses")
+  })
+}
+
+shinyApp(ui, server)
