@@ -80,7 +80,8 @@ _Now try to predict what happens with the linse using the chain ladder technique
 
 Your solution
 ```{r}
-
+chainladder(GenIns)
+predict(chainladder(GenIns))
 
 
 
@@ -103,38 +104,74 @@ create a variable => filter data and covert to triangle. then convert to cummula
 _STEP 1: Take paid data for House business and Small claim size_
 
 ```{r}
-Paid_HH_sml <- dt_PaidCase %>% filter(...) 
+Paid_HH_sml <- dt_PaidCase %>% filter(Business == "House" & ClaimSize == "Small" & dataset_type == "PAID")
+head(Paid_HH_sml)
 ```
 
 _STEP 2: Now convert the standard table into a triangle_
 Hint: %>% as.triangle(...)
 
 ```{r}
-
+Paid_HH_sml_triangle <- Paid_HH_sml %>% as.triangle(Paid_HH_sml, origin = "ay", dev = "dy", value = "SumOfamount")
 ```
 
 _STEP 3: Now start plotting things to see more information_
 
 ```{r}
-
+plot(Paid_HH_sml_triangle)
+plot(predict(chainladder(Paid_HH_sml_triangle)))
 ```
 
 _STEP 4: And get the aging factors and some other stat's out to see more details_
 Hint: ata(...)
 
 ```{r}
-
+ata(Paid_HH_sml_triangle)
 ```
 
 _Now repeat for all types of buiness and sizes of claims. Compare the findings..._
 
 ```{r}
+#prvé su dáta z "lesson2", ale nepoužili sme Large data:
+Paid_HH_lrg <- dt_PaidCase %>% filter(Business == "House" & ClaimSize == "Large" & dataset_type == "PAID")
+Paid_HH_lrg_triangle <- Paid_HH_lrg %>% as.triangle(Paid_HH_lrg, origin = "ay", dev = "dy", value = "SumOfamount")
+#mam prehodene stlpce, tak podla nahovu ich prehodim, tak aby bol prvy na mieste
+Paid_HH_lrg_triangle <- triangle( Paid_HH_lrg_triangle[,10], Paid_HH_lrg_triangle[,9], Paid_HH_lrg_triangle[,1], Paid_HH_lrg_triangle[,2], Paid_HH_lrg_triangle[,3], Paid_HH_lrg_triangle[,4], Paid_HH_lrg_triangle[,5], Paid_HH_lrg_triangle[,6], Paid_HH_lrg_triangle[,7], Paid_HH_lrg_triangle[,8] )
+Paid_HH_lrg_triangle
+
+plot(Paid_HH_lrg_triangle)
+plot(predict(chainladder(Paid_HH_lrg_triangle)))
+
+ata(Paid_HH_lrg_triangle)
+
+#teraz este pre dalsie data z inych suborov:
+Paid_3rd_sml <- dt_PaidCase %>% filter(Business == "3rd Party" & ClaimSize == "Small" & dataset_type == "PAID")
+Paid_3rd_sml_triangle <- Paid_3rd_sml %>% as.triangle(origin = "ay", dev = "dy", "SumOfamount") 
+
+Paid_3rd_sml_triangle <- triangle( Paid_3rd_sml_triangle[,10], Paid_3rd_sml_triangle[,9], Paid_3rd_sml_triangle[,1], Paid_3rd_sml_triangle[,2], Paid_3rd_sml_triangle[,3], Paid_3rd_sml_triangle[,4], Paid_3rd_sml_triangle[,5], Paid_3rd_sml_triangle[,6], Paid_3rd_sml_triangle[,7], Paid_3rd_sml_triangle[,8] )
+Paid_3rd_sml_triangle
+
+plot(Paid_3rd_sml_triangle)
+plot(predict(chainladder(Paid_3rd_sml_triangle)))
+ata(Paid_3rd_sml_triangle)
+
+
+Paid_3rd_lrg <- dt_PaidCase %>% filter(Business == "3rd Party" & ClaimSize == "Large" & dataset_type == "PAID") 
+Paid_3rd_lrg_triangle <- Paid_3rd_lrg %>% as.triangle(origin = "ay", dev = "dy", "SumOfamount")
+
+Paid_3rd_lrg_triangle <- triangle( Paid_3rd_lrg_triangle[,10], Paid_3rd_lrg_triangle[,9], Paid_3rd_lrg_triangle[,1], Paid_3rd_lrg_triangle[,2], Paid_3rd_lrg_triangle[,3], Paid_3rd_lrg_triangle[,4], Paid_3rd_lrg_triangle[,5], Paid_3rd_lrg_triangle[,6], Paid_3rd_lrg_triangle[,7], Paid_3rd_lrg_triangle[,8] )
+Paid_3rd_lrg_triangle
+
+plot(Paid_3rd_lrg_triangle)
+plot(predict(chainladder(Paid_3rd_lrg_triangle)))
+ata(Paid_3rd_lrg_triangle)
+
 
 ```
 
 _If you are now comforatble with what this does, try doing the same, but using additional information: The Case data!_
 Hint: Sum Paid and Case together to come up with the final claims estimates (the Incurred claims)
-
+????
 ```{r}
 
 ```
@@ -150,6 +187,8 @@ So hopefully by this time you know how the losses were calculated for you to use
 There are a couple of different types of business in the data from previous lesson. 
 What do you think, how long are the average delays in payments? Set up a table, that will 
 _show your assumptions and commit it to your git repository._
+
+summary(dt_KPI)
 
 
 ### Discounting  losses
