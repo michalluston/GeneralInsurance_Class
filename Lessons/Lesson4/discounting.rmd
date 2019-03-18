@@ -174,6 +174,42 @@ Hint: Sum Paid and Case together to come up with the final claims estimates (the
 ????
 ```{r}
 
+PC_HH_Large<-dt_PaidCase %>% filter( Business == "House" & ClaimSize == "Large" )  
+PC_HH_Large_triangle <- PC_HH_Large %>% as.triangle(origin = "ay", dev = "dy", "SumOfamount")
+PC_HH_Large_triangle
+PC_HH_Large_triangle <- triangle(PC_HH_Large_triangle[,10], PC_HH_Large_triangle[,9], PC_HH_Large_triangle[,1], PC_HH_Large_triangle[,2], PC_HH_Large_triangle[,3], PC_HH_Large_triangle[,4], PC_HH_Large_triangle[,5], PC_HH_Large_triangle[,6], PC_HH_Large_triangle[,7], PC_HH_Large_triangle[,8])
+PC_HH_Large_triangle
+plot(PC_HH_Large_triangle) 
+plot(predict(chainladder(PC_HH_Large_triangle)))
+ata(PC_HH_Large_triangle)
+
+PC_HH_Small<-dt_PC %>% filter( Business == "House" & ClaimSize == "Small" )  
+PC_HH_Small_triangle <- PC_HH_Small %>% as.triangle(origin = "ay", dev = "dy", "SumOfamount")
+PC_HH_Small_triangle
+PC_HH_Small_triangle <- triangle(PC_HH_Small_triangle[,10], PC_HH_Small_triangle[,9], PC_HH_Small_triangle[,1], PC_HH_Small_triangle[,2], PC_HH_Small_triangle[,3], PC_HH_Small_triangle[,4], PC_HH_Small_triangle[,5], PC_HH_Small_triangle[,6], PC_HH_Small_triangle[,7], PC_HH_Small_triangle[,8])
+PC_HH_Small_triangle
+plot(PC_HH_Small_triangle) 
+plot(predict(chainladder(PC_HH_Small_triangle)))
+ata(PC_HH_Small_triangle)
+
+PC_3rd_Large<-dt_PC %>% filter(Business == "3rd Party" & ClaimSize == "Large" )  
+PC_3rd_Large_triangle <- PC_3rd_Large %>% as.triangle(origin = "ay", dev = "dy", "SumOfamount")
+PC_3rd_Large_triangle
+PC_3rd_Large_triangle <- triangle(PC_3rd_Large_triangle[,10], PC_3rd_Large_triangle[,9], PC_3rd_Large_triangle[,1], PC_3rd_Large_triangle[,2], PC_3rd_Large_triangle[,3], PC_3rd_Large_triangle[,4], PC_3rd_Large_triangle[,5], PC_3rd_Large_triangle[,6], PC_3rd_Large_triangle[,7], PC_3rd_Large_triangle[,8])
+PC_3rd_Large_triangle
+plot(PC_3rd_Large_triangle) 
+plot(predict(chainladder(PC_3rd_Large_triangle)))
+ata(PC_3rd_Large_triangle)
+
+PC_3rd_Small<-dt_PC %>% filter( Business == "3rd Party" & ClaimSize == "Small" )  
+PC_3rd_Small_triangle <- PC_3rd_Small %>% as.triangle(origin = "ay", dev = "dy", "SumOfamount")
+PC_3rd_Small_triangle
+PC_3rd_Small_triangle <- triangle(PC_3rd_Small_triangle[,10], PC_3rd_Small_triangle[,9], PC_3rd_Small_triangle[,1], PC_3rd_Small_triangle[,2], PC_3rd_Small_triangle[,3], PC_3rd_Small_triangle[,4], PC_3rd_Small_triangle[,5], PC_3rd_Small_triangle[,6], PC_3rd_Small_triangle[,7], PC_3rd_Small_triangle[,8])
+PC_3rd_Small_triangle
+plot(PC_HH_Small_triangle)
+plot(PC_3rd_Small_triangle) 
+plot(predict(chainladder(PC_3rd_Small_triangle)))
+ata(PC_3rd_Small_triangle)
 ```
 
 
