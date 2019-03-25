@@ -1,0 +1,73 @@
+install.packages("dplyr")
+install.packages("lubridate")
+library(dplyr)
+dt_Policy <- read.csv("C:\\Users\\elu\\Desktop\\skola\\aktuarstvo\\GeneralInsurance_Class-Class2019\\Data\\lesson5_PolicyHistory.csv") %>% distinct(NrPolicy, NrObject, .keep_all = TRUE) 
+dt_Claims <- read.csv("C:\\Users\\elu\\Desktop\\skola\\aktuarstvo\\GeneralInsurance_Class-Class2019\\Data\\lesson5_Claims.csv") %>% distinct(NrClaim, .keep_all = TRUE)
+
+dt_pol_w_claims <- left_join(dt_Policy, 
+                             dt_Claims, 
+                             by = c("NrPolicy", "NrObject")
+)
+
+library(lubridate)
+dt_pol_w_claims <-dt_pol_w_claims %>% mutate(Time_Exposure = lubridate::dmy(Dt_Exp_End) - lubridate::dmy(Dt_Exp_Start))
+dt_pol_w_claims <- 
+  dt_pol_w_claims %>% 
+  mutate(Ult_Loss = Paid + Reserves,
+         Burning_Cost = ifelse(is.na(Ult_Loss), 0,  Ult_Loss / as.integer(Time_Exposure))
+  )
+
+library(ggplot2)
+dt_pol_w_claims %>% 
+  ggplot(aes(y = Burning_Cost, x = Sum_insured)) + 
+  geom_jitter()
+
+#budem analyzovať ak správne chápem tým stĺpcom, ktoré obsahujú dané excely, celková suma poistenia
+#a capacity - objem motora? - dosť často sa stáva, že vodič predbieha a nestihne sa zaradiť do svojho pruhu
+
+
+dt_pol_w_claims[, 21] <- as.factor(dt_pol_w_claims[, 21])
+dt_pol_w_claims %>% 
+  ggplot(aes(y = Burning_Cost, x = Sum_insured)) + 
+  geom_boxplot() +
+  ylim(0, 250)
+
+GLMmodel <- glm(data = dt_pol_w_claims %>% filter(Burning_Cost != 0, Burning_Cost < 500),
+                formula = Burning_Cost ~ Sum_insured,
+                family = Gamma())
+summary(GLMmodel)
+
+# sum_insured má nízku hodnotu vplyvu na náš model, tak pri zmene hodnoty o jednu jednotu tohto parametra nevidíme potenciálne zmeny, velke zmeny mozeme pozorovať
+#ak sa nam parameter sum_insured, zmení výrazne tak aj zmena sa nam prejavi v modeli
+
+
+dt_pol_w_claims %>% 
+  ggplot(aes(y = Burning_Cost, x = Capacity)) + 
+  geom_jitter()
+
+#dt_pol_w_claims[, 18] <- as.factor(dt_pol_w_claims[, 18])
+#dt_pol_w_claims %>% 
+#  ggplot(aes(y = Burning_Cost, x = Capacity)) + 
+#  geom_boxplot() +
+#  ylim(0, 250)
+
+GLMmodel <- glm(data = dt_pol_w_claims %>% filter(Burning_Cost != 0, Burning_Cost < 100), 
+                   formula = Burning_Cost ~ Capacity,
+                   family = Gamma())
+summary(GLMmodel)
+
+#capacity dosahuje nizku hodnotu a nema vyznamny vplyv na model
+GLMmodel <- glm(data = dt_pol_w_claims %>% filter(Burning_Cost != 0, Burning_Cost < 100),
+                formula = Burning_Cost ~ Sum_insured + Capacity,
+                family = Gamma())
+summary(GLMmodel)
+#parameter "capacity" nema vyznamny vplyv na nas vysledny model aj ked jedho vplyv je o nieco vecsi ako ked som pracoval s jednym parametrom
+#parameter "sum_insured" ma v tom modeli uz vyznamny vplyv jeho hodnota je 8,31% a ma vyznamny vplyv pri zmene modelu o jednu jednotku zmeny parametra "sum_insured"
+
+#pre lepšie zhrnutie modelu, bolo by lepšie do modelu zahrnut viac parametrov a potom skúšať jednotlivé parametre, resp. videli by sme to na zaklade 9-hodnoty v modeli
+#aky maju vplyv na daný model, ak ich vplyv na model bude blizky k nule tak by sme ho vylucili, ale ak p-hodnota bude vecsia ako 5% tak tento parameter bude mat vplyv
+#na nas vysledny model
+
+#v poisťovníctve je množstvo faktorov, ktoré majú vplyv na vývoj modelov, jednotlive parametre, ktore nie su vyjadritelny cislom ale slovom, by sme museli mat spravne
+#prevodniky a dosledne otestovanie ich hodnot na nas model, lebo podla mojho nazoru ak znackam/typom priradime nejake nahodne cisla tak tento parameter nebude mat
+#vyznamnu ulohu pri urcovani spravnosti modelu, lebo zakaznik sa sprava nahodne a my nevieme ovplyvnit jeho rozhodnutie ake auto si kupi, druh typ a ani farbu vozidla
